@@ -1,0 +1,32 @@
+{
+  "name": "glizzy",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "bunx playwright test --project=chromium",
+    "test:ui": "bunx playwright test --ui",
+    "test:headed": "bunx playwright test --headed",
+    "test:debug": "bunx playwright test --debug",
+    "test:report": "bunx playwright show-report",
+    "test:all": "bunx playwright test",
+    "lint": "bunx oxlint --type-aware",
+    "lint:fix": "bunx oxlint --type-aware --fix",
+    "lint:fast": "bunx oxlint",
+    "format": "bunx oxfmt --write",
+    "format:check": "bunx oxfmt --check",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.11.1",
+    "@guidepup/playwright": "^0.15.0",
+    "@playwright/test": "^1.58.2",
+    "@tailwindcss/cli": "^4.2.1",
+    "@types/node": "^25.3.0",
+    "axe-core": "^4.11.1",
+    "lost-pixel": "^3.22.0",
+    "oxlint": "^1.50.0",
+    "tailwindcss": "^4.2.1",
+    "typescript": "^5.9.3"
+  }
+}

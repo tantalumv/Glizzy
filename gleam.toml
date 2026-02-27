@@ -1,0 +1,20 @@
+name = "glizzy"
+version = "0.1.0"
+description = "A shadcn/ui-inspired UI library for Gleam and Lustre"
+gleam = ">= 1.14.0"
+target = "javascript"
+
+licences = ["MIT"]
+repository = { type = "github", user = "tantalumv", repo = "Glizzy" }
+
+[dependencies]
+gleam_stdlib = ">= 0.45.0 and < 2.0.0"
+lustre = ">= 5.0.0 and < 6.0.0"
+gleam_time = ">= 1.7.0 and < 2.0.0"
+gleam_community_colour = ">= 2.0.0 and < 3.0.0"
+
+[dev-dependencies]
+gleeunit = ">= 1.0.0 and < 2.0.0"
+
+[javascript]
+runtime = "bun"

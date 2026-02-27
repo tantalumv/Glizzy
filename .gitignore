@@ -1,0 +1,60 @@
+# Gleam build artifacts
+/build/
+*.beam
+*.ez
+erl_crash.dump
+
+# Gleam package manager
+gleam.lock
+manifest.toml
+
+# Sync script (local dev only)
+sync-from-dev.sh
+
+# docs
+docs/
+
+# JavaScript/TypeScript
+node_modules/
+dist/
+*.js.map
+*.d.ts
+e2e/snapshots/components
+
+# Bun
+bun.lock
+
+# Lustre dev tools
+.lustre/
+
+# Playwright
+test-results/
+playwright-report/
+playwright/.cache/
+
+# IDE and editors
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+sync-from-dev.sh
+
+# Logs
+*.log
+logs/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.bak
+
+# OS files
+Thumbs.db

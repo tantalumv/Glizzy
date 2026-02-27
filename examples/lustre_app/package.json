@@ -1,0 +1,20 @@
+{
+  "name": "glizzy-lustre-app",
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev:css": "bunx tailwindcss -i glizzy_lustre_app.css -o assets/glizzy_lustre_app.css",
+    "dev:watch": "bunx tailwindcss -i glizzy_lustre_app.css -o assets/glizzy_lustre_app.css --watch",
+    "dev:copy-ffi": "mkdir -p build/dev/javascript/lustre_utils/interactions && cp src/lustre_utils/interactions/interactions.ffi.mjs src/lustre_utils/interactions/interactions.mjs build/dev/javascript/lustre_utils/interactions/",
+    "dev:copy-fonts": "mkdir -p assets && cp ../../node_modules/remixicon/fonts/*.woff2 ../../node_modules/remixicon/fonts/*.woff ../../node_modules/remixicon/fonts/*.ttf ../../node_modules/remixicon/fonts/*.eot ../../node_modules/remixicon/fonts/*.svg assets/",
+    "dev:setup": "bun run dev:css && bun run dev:copy-ffi && bun run dev:copy-fonts",
+    "dev": "bun run dev:setup && gleam run -m lustre/dev start",
+    "build": "gleam run -m lustre/dev build --minify --outdir=public && bunx tailwindcss -i glizzy_lustre_app.css -o public/glizzy_lustre_app.css --minify && cp ../../node_modules/remixicon/fonts/*.woff2 ../../node_modules/remixicon/fonts/*.woff ../../node_modules/remixicon/fonts/*.ttf ../../node_modules/remixicon/fonts/*.eot ../../node_modules/remixicon/fonts/*.svg public/"
+  },
+  "devDependencies": {
+    "tailwindcss": "^4.2.0"
+  },
+  "dependencies": {
+    "remixicon": "^4.9.1"
+  }
+}
