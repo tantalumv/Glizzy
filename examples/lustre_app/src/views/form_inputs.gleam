@@ -11,11 +11,11 @@ import gleam/int
 import gleam/list
 import gleam/option.{None, Some}
 import gleam/result
+import lib/tailwind
 import lustre/attribute.{attribute, class, type_}
 import lustre/element.{type Element, none, text}
 import lustre/element/html
 import lustre/event
-import lib/tailwind
 import lustre_utils/checkbox_group as checkbox_group_utils
 import lustre_utils/keyboard
 import lustre_utils/radio_group as radio_group_utils
@@ -23,8 +23,7 @@ import lustre_utils/slider as slider_utils
 import lustre_utils/toggle_button_group as toggle_button_group_utils
 import types.{
   type Model, type Msg, CheckboxGroupMsg, CheckboxToggled, InputChanged, NoOp,
-  RadioGroupMsg, SliderMsg,
-  SwitchToggled, ToggleButtonGroupMsg,
+  RadioGroupMsg, SliderMsg, SwitchToggled, ToggleButtonGroupMsg,
 }
 import ui/button
 import ui/checkbox
@@ -48,7 +47,10 @@ pub fn view_inputs(model: Model) -> Element(Msg) {
           attribute("value", model.input_value),
           event.on_input(InputChanged),
         ]),
-        tailwind.helper_text_id("input-default-hint", "Use Tab to focus. Type to see state update live."),
+        tailwind.helper_text_id(
+          "input-default-hint",
+          "Use Tab to focus. Type to see state update live.",
+        ),
       ]),
       tailwind.field([
         tailwind.label_text("input-required", "Required input"),
@@ -66,7 +68,10 @@ pub fn view_inputs(model: Model) -> Element(Msg) {
           attribute("placeholder", "This field is required"),
           event.on_input(InputChanged),
         ]),
-        tailwind.helper_text_id("input-required-hint", "This field must be filled."),
+        tailwind.helper_text_id(
+          "input-required-hint",
+          "This field must be filled.",
+        ),
       ]),
       tailwind.field([
         tailwind.label_text("input-placeholder", "Input with placeholder"),
@@ -78,7 +83,10 @@ pub fn view_inputs(model: Model) -> Element(Msg) {
           attribute("aria-describedby", "input-placeholder-hint"),
           attribute("placeholder", "Enter text here"),
         ]),
-        tailwind.helper_text_id("input-placeholder-hint", "Placeholder text shows expected format."),
+        tailwind.helper_text_id(
+          "input-placeholder-hint",
+          "Placeholder text shows expected format.",
+        ),
       ]),
       tailwind.field([
         tailwind.label_text("input-muted", "Muted input"),
@@ -91,17 +99,16 @@ pub fn view_inputs(model: Model) -> Element(Msg) {
           attribute("aria-label", "Muted input"),
           attribute("placeholder", "muted@example.com"),
         ]),
-        tailwind.helper_text_id("input-muted-hint", "Muted inputs have subtle focus rings."),
+        tailwind.helper_text_id(
+          "input-muted-hint",
+          "Muted inputs have subtle focus rings.",
+        ),
       ]),
     ]),
   ])
 }
 
 pub fn view_switches(model: Model) -> Element(Msg) {
-  let checked_attrs = case model.switch_enabled {
-    True -> [attribute("checked", ""), attribute("aria-checked", "true")]
-    False -> [attribute("aria-checked", "false")]
-  }
   tailwind.vstack_md([
     tailwind.section_heading("Switches"),
     tailwind.field([
@@ -116,8 +123,12 @@ pub fn view_switches(model: Model) -> Element(Msg) {
               attribute("id", "switch-notifications"),
               attribute("aria-labelledby", "switch-notifications-label"),
               attribute("aria-describedby", "switch-notifications-hint"),
-              event.on_check(SwitchToggled),
-              ..checked_attrs
+              attribute("aria-checked", case model.switch_enabled {
+                True -> "true"
+                False -> "false"
+              }),
+              // Use on_change - fires when checkbox state changes
+              event.on_change(fn(_) { SwitchToggled(!model.switch_enabled) }),
             ],
             [
               html.span(
@@ -134,7 +145,11 @@ pub fn view_switches(model: Model) -> Element(Msg) {
               attribute("id", "switch-notifications-hint"),
               class("text-sm text-muted-foreground"),
             ],
-            [text("Toggle with Spacebar when focused; the switch announces state changes.")],
+            [
+              text(
+                "Toggle with Spacebar when focused; the switch announces state changes.",
+              ),
+            ],
           ),
         ],
       ),
@@ -158,7 +173,10 @@ pub fn view_selects() -> Element(Msg) {
           select.option([], "Option 3", "option3"),
         ],
       ),
-      tailwind.helper_text_id("select-default-hint", "Press Enter to open. Use arrow keys to navigate."),
+      tailwind.helper_text_id(
+        "select-default-hint",
+        "Press Enter to open. Use arrow keys to navigate.",
+      ),
     ]),
     tailwind.field([
       select.select(
@@ -173,7 +191,10 @@ pub fn view_selects() -> Element(Msg) {
           select.option([], "Muted Option 2", "muted2"),
         ],
       ),
-      tailwind.helper_text_id("select-muted-hint", "Muted styling keeps focus ring visible."),
+      tailwind.helper_text_id(
+        "select-muted-hint",
+        "Muted styling keeps focus ring visible.",
+      ),
     ]),
   ])
 }
@@ -245,7 +266,11 @@ pub fn view_checkboxes() -> Element(Msg) {
           attribute("id", "checkbox-newsletter-hint"),
           class("text-xs text-muted-foreground"),
         ],
-        [text("Optional newsletter. Press Space to toggle, Shift+Tab to return.")],
+        [
+          text(
+            "Optional newsletter. Press Space to toggle, Shift+Tab to return.",
+          ),
+        ],
       ),
     ]),
   ])
@@ -261,24 +286,37 @@ pub fn view_radio_group(model: Model) -> Element(Msg) {
         let #(option, index) = item
         let is_checked =
           radio_group_utils.is_selected(model.radio_group, option)
-        let tabindex = radio_group_utils.tabindex_for(model.radio_group, index)
+        let is_highlighted = radio_group_utils.is_highlighted(model.radio_group, index)
+        let radio_id = radio_group_utils.radio_element_id(index)
+        let label_id = "radio-label-" <> int.to_string(index)
         let checked_attrs = case is_checked {
           True -> [attribute("checked", ""), attribute("aria-checked", "true")]
           False -> [attribute("aria-checked", "false")]
+        }
+        // Roving tabindex: only the highlighted radio has tabindex="0", others have tabindex="-1"
+        let tabindex_attrs = case is_highlighted {
+          True -> [attribute("tabindex", "0")]
+          False -> [attribute("tabindex", "-1")]
         }
         [
           html.label(
             [
               class("flex items-center gap-2 cursor-pointer"),
+              attribute("id", label_id),
             ],
             [
               html.input(list.append(
                 [
                   type_("radio"),
-                  attribute("id", radio_group_utils.radio_element_id(index)),
+                  attribute("id", radio_id),
                   attribute("name", "keyboard-radio-options"),
                   attribute("value", option),
-                  attribute("tabindex", int.to_string(tabindex)),
+                  attribute("aria-labelledby", label_id),
+                  // Roving tabindex for keyboard navigation
+                  attribute("tabindex", case is_highlighted {
+                    True -> "0"
+                    False -> "-1"
+                  }),
                   event.on_change(fn(_e) {
                     RadioGroupMsg(radio_group_utils.Select(option))
                   }),
@@ -312,7 +350,11 @@ pub fn view_radio_group(model: Model) -> Element(Msg) {
           attribute("id", "radio-group-hint"),
           class("text-xs text-muted-foreground"),
         ],
-        [text("Arrow keys move between options. Space selects the focused option.")],
+        [
+          text(
+            "Arrow keys move between options. Space selects the focused option.",
+          ),
+        ],
       ),
     ])
   tailwind.vstack_md([
@@ -327,7 +369,7 @@ pub fn view_radio_group(model: Model) -> Element(Msg) {
           attribute("aria-label", "Choose an option"),
           attribute("aria-labelledby", "radio-group-label"),
           attribute("aria-describedby", "radio-group-hint"),
-          attribute("tabindex", "0"),
+          // Remove tabindex="0" from radiogroup - native radio buttons handle focus naturally
           keyboard.on_keydown(fn(event) {
             case radio_group_utils.keymap(event) {
               Some(msg) -> RadioGroupMsg(msg)
@@ -394,7 +436,9 @@ pub fn view_checkbox_group(model: Model) -> Element(Msg) {
       checkbox_items,
     )
     |> list.append([
-      tailwind.helper_text_text("Focus with Tab, then use Arrow keys to navigate. Space toggles the focused checkbox. Home/End jump to first/last."),
+      tailwind.helper_text_text(
+        "Focus with Tab, then use Arrow keys to navigate. Space toggles the focused checkbox. Home/End jump to first/last.",
+      ),
     ])
   tailwind.vstack_md([
     tailwind.section_heading("Keyboard-Enabled Checkbox Group"),
@@ -464,9 +508,14 @@ pub fn view_toggle_button_group(model: Model) -> Element(Msg) {
                 decode.success(event.handler(
                   ToggleButtonGroupMsg(toggle_button_group_utils.Toggle(index)),
                   prevent_default: True,
-                  stop_propagation: True
+                  stop_propagation: True,
                 ))
-              _ -> decode.success(event.handler(NoOp, prevent_default: False, stop_propagation: False))
+              _ ->
+                decode.success(event.handler(
+                  NoOp,
+                  prevent_default: False,
+                  stop_propagation: False,
+                ))
             }
           }),
         ],
@@ -475,7 +524,9 @@ pub fn view_toggle_button_group(model: Model) -> Element(Msg) {
     })
   let all_children =
     list.append(button_items, [
-      tailwind.helper_text_text("Focus with Tab, then use Arrow keys to navigate. Space/Enter toggles the focused button. Home/End jump to first/last."),
+      tailwind.helper_text_text(
+        "Focus with Tab, then use Arrow keys to navigate. Space/Enter toggles the focused button. Home/End jump to first/last.",
+      ),
     ])
   tailwind.vstack_md([
     tailwind.section_heading("Keyboard-Enabled Toggle Button Group"),
@@ -498,7 +549,7 @@ pub fn view_toggle_button_group(model: Model) -> Element(Msg) {
                 || msg_option == Some(toggle_button_group_utils.MovePrev)
                 || msg_option == Some(toggle_button_group_utils.MoveFirst)
                 || msg_option == Some(toggle_button_group_utils.MoveLast)
-                -> ToggleButtonGroupMsg(msg)
+              -> ToggleButtonGroupMsg(msg)
               // Handle toggle on wrapper - toggle the highlighted button
               Some(toggle_button_group_utils.Toggle(_)) ->
                 ToggleButtonGroupMsg(toggle_button_group_utils.Toggle(-1))
@@ -513,46 +564,102 @@ pub fn view_toggle_button_group(model: Model) -> Element(Msg) {
 }
 
 pub fn view_slider(model: Model) -> Element(Msg) {
-  tailwind.vstack_md([
-    tailwind.section_heading("Slider"),
-    tailwind.vstack_md([
-      // Keyboard-enabled slider with stateful component
-      html.div(
+  html.div(
+    [
+      attribute("data-testid", "sliders-section"),
+      class("space-y-6"),
+    ],
+    [
+      tailwind.vstack_md([
+        tailwind.section_heading("Slider"),
+        tailwind.vstack_md([
+          // Keyboard-enabled slider with stateful component - default
+          html.div(
+            [
+              class("space-y-2"),
+              attribute("data-testid", "slider-default"),
+              keyboard.on_keydown(fn(event) {
+                case slider_utils.keymap(event, slider.Horizontal) {
+                  Some(msg) -> SliderMsg(msg)
+                  None -> SliderMsg(slider_utils.Focus)
+                }
+              }),
+              attribute("tabindex", "0"),
+              attribute("id", slider_utils.element_id()),
+              attribute("role", "slider"),
+              attribute("aria-valuenow", int.to_string(model.slider.value)),
+              attribute("aria-valuemin", int.to_string(model.slider.min)),
+              attribute("aria-valuemax", int.to_string(model.slider.max)),
+              attribute("aria-label", "Keyboard-enabled slider"),
+            ],
+            [
+              slider.slider([
+                attribute("min", int.to_string(model.slider.min)),
+                attribute("max", int.to_string(model.slider.max)),
+                attribute("value", int.to_string(model.slider.value)),
+                slider.aria_valuemin(model.slider.min),
+                slider.aria_valuemax(model.slider.max),
+                slider.aria_valuenow(model.slider.value),
+                slider.aria_label("Keyboard-enabled slider"),
+                event.on_input(fn(v) {
+                  SliderMsg(slider_utils.SetValue(
+                    int.parse(v) |> result.unwrap(0),
+                  ))
+                }),
+              ]),
+              tailwind.helper_text_text(
+                "Focus with Tab, then use Arrow keys to adjust. Home/End for min/max, PageUp/PageDown for larger steps.",
+              ),
+            ],
+          ),
+          // Large slider variant
+          html.div(
+            [
+              class("space-y-2"),
+              attribute("data-testid", "slider-large"),
+              keyboard.on_keydown(fn(event) {
+                case slider_utils.keymap(event, slider.Horizontal) {
+                  Some(msg) -> SliderMsg(msg)
+                  None -> SliderMsg(slider_utils.Focus)
+                }
+              }),
+              attribute("tabindex", "0"),
+              attribute("id", "slider-large-element"),
+              attribute("role", "slider"),
+              attribute("aria-valuenow", int.to_string(model.slider.value)),
+              attribute("aria-valuemin", int.to_string(model.slider.min)),
+              attribute("aria-valuemax", int.to_string(model.slider.max)),
+              attribute("aria-label", "Large keyboard-enabled slider"),
+            ],
+            [
+              slider.slider([
+                attribute("min", int.to_string(model.slider.min)),
+                attribute("max", int.to_string(model.slider.max)),
+                attribute("value", int.to_string(model.slider.value)),
+                slider.aria_valuemin(model.slider.min),
+                slider.aria_valuemax(model.slider.max),
+                slider.aria_valuenow(model.slider.value),
+                slider.aria_label("Large keyboard-enabled slider"),
+                event.on_input(fn(v) {
+                  SliderMsg(slider_utils.SetValue(
+                    int.parse(v) |> result.unwrap(0),
+                  ))
+                }),
+              ]),
+              tailwind.helper_text_text("Large slider variant."),
+            ],
+          ),
+        ]),
+      ]),
+      html.p(
         [
-          class("space-y-2"),
-          attribute("data-testid", "slider-keyboard-demo"),
-          keyboard.on_keydown(fn(event) {
-            case slider_utils.keymap(event, slider.Horizontal) {
-              Some(msg) -> SliderMsg(msg)
-              None -> SliderMsg(slider_utils.Focus)
-            }
-          }),
-          attribute("tabindex", "0"),
-          attribute("id", slider_utils.element_id()),
-          attribute("role", "slider"),
-          attribute("aria-valuenow", int.to_string(model.slider.value)),
-          attribute("aria-valuemin", int.to_string(model.slider.min)),
-          attribute("aria-valuemax", int.to_string(model.slider.max)),
-          attribute("aria-label", "Keyboard-enabled slider"),
+          attribute("data-testid", "sliders-keyboard-hint"),
+          class("text-xs text-muted-foreground"),
         ],
-        [
-          slider.slider([
-            attribute("min", int.to_string(model.slider.min)),
-            attribute("max", int.to_string(model.slider.max)),
-            attribute("value", int.to_string(model.slider.value)),
-            slider.aria_valuemin(model.slider.min),
-            slider.aria_valuemax(model.slider.max),
-            slider.aria_valuenow(model.slider.value),
-            slider.aria_label("Keyboard-enabled slider"),
-            event.on_input(fn(v) {
-              SliderMsg(slider_utils.SetValue(int.parse(v) |> result.unwrap(0)))
-            }),
-          ]),
-          tailwind.helper_text_text("Focus with Tab, then use Arrow keys to adjust. Home/End for min/max, PageUp/PageDown for larger steps."),
-        ],
+        [text("Sliders: arrow keys adjust value, Home/End for min/max.")],
       ),
-    ]),
-  ])
+    ],
+  )
 }
 
 pub fn view(model: Model) -> Element(Msg) {

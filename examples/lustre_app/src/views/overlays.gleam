@@ -7,7 +7,7 @@ import lib/tailwind
 import lustre_utils/dialog as dialog_utils
 import lustre_utils/modal as modal_utils
 import types.{
-  type Model, type Msg, DialogMsg, DisclosureToggled, ModalMsg, ToggleTooltip,
+  type Model, type Msg, DialogMsg, DisclosureToggled, ModalMsg, NoOp, ToggleTooltip,
 }
 import ui/button
 import ui/dialog
@@ -22,8 +22,9 @@ pub fn view_dialogs(model: Model) -> Element(Msg) {
         [
           button.variant(button.Default),
           button.size(button.Medium),
-          event.on_click(DialogMsg(dialog_utils.Toggle)),
+          attribute("id", "dialog-trigger"),
           attribute("data-testid", "dialog-trigger"),
+          event.on_click(DialogMsg(dialog_utils.Toggle)),
         ],
         [text("Open Dialog")],
       ),
@@ -36,7 +37,7 @@ pub fn view_dialogs(model: Model) -> Element(Msg) {
             event.on_keydown(fn(key) {
               case key {
                 "Escape" -> DialogMsg(dialog_utils.Escape)
-                _ -> DialogMsg(dialog_utils.Close)
+                _ -> NoOp
               }
             }),
           ],
@@ -99,6 +100,7 @@ pub fn view_dialogs(model: Model) -> Element(Msg) {
 }
 
 pub fn view_modals(model: Model) -> Element(Msg) {
+  let is_open = modal_utils.is_open(model.modal)
   tailwind.vstack_md([
     tailwind.section_heading("Modal"),
     tailwind.section_description_text("Modal with focus trap, aria-modal, and aria-describedby."),
@@ -107,65 +109,78 @@ pub fn view_modals(model: Model) -> Element(Msg) {
         [
           button.variant(button.Default),
           button.size(button.Medium),
-          event.on_click(ModalMsg(modal_utils.Toggle)),
+          attribute("id", "modal-trigger"),
           attribute("data-testid", "modal-trigger"),
+          event.on_click(ModalMsg(modal_utils.Toggle)),
         ],
         [text("Open Modal")],
       ),
     ]),
-    case modal_utils.is_open(model.modal) {
-      True ->
-        modal.modal(
-          [
-            attribute("data-testid", "modal-wrapper"),
-            modal.aria_labelledby("modal-title"),
-            modal.aria_describedby("modal-description"),
-            event.on_keydown(fn(key) {
-              case key {
-                "Escape" -> ModalMsg(modal_utils.Escape)
-                _ -> ModalMsg(modal_utils.Close)
-              }
-            }),
-          ],
-          [
-            modal.underlay([
-              attribute("data-testid", "modal-underlay"),
-              class("pointer-events-auto"),
-              event.on_click(ModalMsg(modal_utils.Close)),
-            ]),
-            modal.content(
-              [
-                attribute("id", model.modal.focus_scope_id),
-                modal.size(modal.Medium),
-                attribute("data-testid", "modal-content"),
-                attribute("data-state", "open"),
-              ],
-              [
-                h2(
+    bool.guard(
+      is_open,
+      modal.modal(
+        [
+          attribute("data-testid", "modal-wrapper"),
+          attribute("tabindex", "-1"),
+          modal.aria_labelledby("modal-title"),
+          modal.aria_describedby("modal-description"),
+          event.on_keydown(fn(key) {
+            case key {
+              "Escape" -> ModalMsg(modal_utils.Escape)
+              _ -> NoOp
+            }
+          }),
+        ],
+        [
+          modal.underlay([
+            attribute("data-testid", "modal-underlay"),
+            event.on_click(ModalMsg(modal_utils.Close)),
+          ]),
+          modal.content(
+            [
+              attribute("id", model.modal.focus_scope_id),
+              modal.size(modal.Medium),
+              attribute("data-testid", "modal-content"),
+              attribute("data-state", "open"),
+              event.on_keydown(fn(key) {
+                case key {
+                  "Escape" -> ModalMsg(modal_utils.Escape)
+                  _ -> NoOp
+                }
+              }),
+            ],
+            [
+              h2(
+                [
+                  attribute("id", "modal-title"),
+                  class("text-lg font-semibold"),
+                ],
+                [text("Modal Title")],
+              ),
+              p(
+                [
+                  attribute("id", "modal-description"),
+                  class("text-sm text-muted-foreground mt-2"),
+                ],
+                [text("This modal has aria-modal=true and aria-describedby pointing to this description. Focus should be trapped within the modal while open.")],
+              ),
+              tailwind.button_group_right([
+                button.button(
                   [
-                    attribute("id", "modal-title"),
-                    class("text-lg font-semibold"),
+                    button.variant(button.Secondary),
+                    button.size(button.Medium),
+                    event.on_click(ModalMsg(modal_utils.Close)),
+                    attribute("data-testid", "modal-close"),
                   ],
-                  [text("Modal Title")],
+                  [text("Close")],
                 ),
-                tailwind.helper_text_text("This modal has aria-modal=true and aria-describedby pointing to this description. Focus should be trapped within the modal while open."),
-                tailwind.button_group_right([
-                  button.button(
-                    [
-                      button.variant(button.Secondary),
-                      button.size(button.Medium),
-                      event.on_click(ModalMsg(modal_utils.Close)),
-                      attribute("data-testid", "modal-close"),
-                    ],
-                    [text("Close")],
-                  ),
-                ]),
-              ],
-            ),
-          ],
-        )
-      False -> none()
-    },
+              ]),
+            ],
+          ),
+        ],
+      ),
+      fn() { none() },
+    ),
     tailwind.helper_text_text("Escape closes modal. Tab cycles focus within modal content."),
   ])
 }

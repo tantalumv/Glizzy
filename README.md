@@ -14,6 +14,8 @@
 </p>
 
 ---
+> [!NOTE]
+> This repository is still Alpha, expect breaking changes and incomplete features.
 
 ## What is Glizzy UI?
 

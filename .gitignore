@@ -19,7 +19,7 @@ node_modules/
 dist/
 *.js.map
 *.d.ts
-e2e/snapshots/components
+e2e/
 
 # Bun
 bun.lock

@@ -62,6 +62,8 @@ pub fn tab(
   attributes: List(Attribute(a)),
   children: List(Element(a)),
 ) -> Element(a) {
+  // Build base attributes without defaults that would conflict with user attrs
+  // User must provide: aria-selected, tabindex via tab_selected() and explicit attribute
   html.button(
     [
       class(
@@ -77,9 +79,10 @@ pub fn tab(
         |> string.join(" "),
       ),
       role("tab"),
-      attribute("aria-selected", "false"),
+      // Default aria-disabled="false" - this can stay as it's rarely overridden
       attribute("aria-disabled", "false"),
-      attribute("tabindex", "-1"),
+      // NOTE: aria-selected and tabindex must be provided by the user
+      // via tab_selected() and attribute("tabindex", ...) respectively
       ..attributes
     ],
     children,

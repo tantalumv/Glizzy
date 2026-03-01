@@ -28,157 +28,172 @@ import ui/tag_group
 import ui/virtualizer
 
 pub fn view_collections() -> Element(Msg) {
-  tailwind.vstack_lg([
-    tailwind.section_heading("Collections & Data"),
+  div(
+    [
+      attribute("data-testid", "collections-section"),
+      class("space-y-6"),
+    ],
+    [
+      tailwind.vstack_lg([
+        tailwind.section_heading("Collections & Data"),
 
-    tailwind.field([
-      tailwind.section_description_text("List Box - Keyboard navigation, aria-activedescendant"),
-      list_box.list_box(
-        [
-          list_box.aria_label("Select an item"),
-          list_box.selection_mode(list_box.Single),
-          attribute("data-testid", "listbox-demo"),
-        ],
-        [
-          list_box.list_box_option(
-            [attribute("id", "lb-option-1")],
-            "Option One",
-            "opt1",
-          ),
-          list_box.list_box_option(
-            [attribute("id", "lb-option-2")],
-            "Option Two",
-            "opt2",
-          ),
-          list_box.list_box_option(
-            [attribute("id", "lb-option-3")],
-            "Option Three",
-            "opt3",
-          ),
-        ],
-      ),
-    ]),
-
-    tailwind.field([
-      tailwind.section_description_text("Grid List - Multi-select with aria-multiselectable"),
-      grid_list.grid_list(
-        [
-          grid_list.aria_label("Select items"),
-          grid_list.selection_mode(grid_list.Multiple),
-          attribute("data-testid", "gridlist-demo"),
-        ],
-        [
-          grid_list.grid_list_item(
-            [attribute("data-testid", "gridlist-item-1")],
-            [text("Item A")],
-          ),
-          grid_list.grid_list_item(
-            [attribute("data-testid", "gridlist-item-2")],
-            [text("Item B")],
-          ),
-          grid_list.grid_list_item(
-            [attribute("data-testid", "gridlist-item-3")],
-            [text("Item C")],
-          ),
-        ],
-      ),
-    ]),
-
-    tailwind.field([
-      tailwind.section_description_text("Table - role=grid with sortable columns"),
-      table.table(
-        [
-          table.aria_label("Data table"),
-          attribute("data-testid", "table-demo"),
-        ],
-        [
-          table.table_header([], [
-            table.table_header_row([], [
-              table.table_column_header([], [text("Name")]),
-              table.table_column_header([], [text("Status")]),
-              table.table_column_header([], [text("Actions")]),
-            ]),
-          ]),
-          table.table_body([], [
-            table.table_row([attribute("data-testid", "table-row-1")], [
-              table.table_cell([], [text("Item Alpha")]),
-              table.table_cell([], [text("Active")]),
-              table.table_cell([], [text("Edit")]),
-            ]),
-            table.table_row([attribute("data-testid", "table-row-2")], [
-              table.table_cell([], [text("Item Beta")]),
-              table.table_cell([], [text("Pending")]),
-              table.table_cell([], [text("Edit")]),
-            ]),
-          ]),
-        ],
-      ),
-    ]),
-
-    tailwind.field([
-      tailwind.section_description_text("Tag Group - Removable tags with aria-selected"),
-      tag_group.tag_group(
-        [
-          attribute("data-testid", "tag-group-demo"),
-        ],
-        "Selected filters",
-        [
-          tag_group.tag(
+        tailwind.field([
+          tailwind.section_description_text("List Box - Keyboard navigation, aria-activedescendant"),
+          list_box.list_box(
             [
-              tag_group.variant(tag_group.Default),
-              tag_group.size(tag_group.Medium),
-              attribute("data-testid", "tag-1"),
+              list_box.aria_label("Select an item"),
+              list_box.selection_mode(list_box.Single),
+              attribute("data-testid", "listbox-demo"),
             ],
-            [text("React")],
-          ),
-          tag_group.tag(
             [
-              tag_group.variant(tag_group.Secondary),
-              tag_group.size(tag_group.Medium),
-              attribute("data-testid", "tag-2"),
+              list_box.list_box_option(
+                [attribute("id", "lb-option-1")],
+                "Option One",
+                "opt1",
+              ),
+              list_box.list_box_option(
+                [attribute("id", "lb-option-2")],
+                "Option Two",
+                "opt2",
+              ),
+              list_box.list_box_option(
+                [attribute("id", "lb-option-3")],
+                "Option Three",
+                "opt3",
+              ),
             ],
-            [text("Gleam")],
           ),
-          tag_group.tag_with_remove(
+        ]),
+
+        tailwind.field([
+          tailwind.section_description_text("Grid List - Multi-select with aria-multiselectable"),
+          grid_list.grid_list(
             [
-              tag_group.variant(tag_group.Outline),
-              tag_group.size(tag_group.Medium),
-              attribute("data-testid", "tag-3"),
+              grid_list.aria_label("Select items"),
+              grid_list.selection_mode(grid_list.Multiple),
+              attribute("data-testid", "gridlist-demo"),
             ],
-            [text("Lustre")],
+            [
+              grid_list.grid_list_item(
+                [attribute("data-testid", "gridlist-item-1")],
+                [text("Item A")],
+              ),
+              grid_list.grid_list_item(
+                [attribute("data-testid", "gridlist-item-2")],
+                [text("Item B")],
+              ),
+              grid_list.grid_list_item(
+                [attribute("data-testid", "gridlist-item-3")],
+                [text("Item C")],
+              ),
+            ],
           ),
-        ],
-      ),
-    ]),
+        ]),
 
-    tailwind.field([
-      tailwind.section_description_text("Group - role=group for related controls"),
-      group.group(
-        [
-          group.aria_label("Filter options"),
-          attribute("data-testid", "group-demo"),
-        ],
-        [
-          checkbox.checkbox([attribute("id", "group-cb-1")], [text("Active")]),
-          checkbox.checkbox([attribute("id", "group-cb-2")], [text("Archived")]),
-        ],
-      ),
-    ]),
+        tailwind.field([
+          tailwind.section_description_text("Table - role=grid with sortable columns"),
+          table.table(
+            [
+              table.aria_label("Data table"),
+              attribute("data-testid", "table-demo"),
+            ],
+            [
+              table.table_header([], [
+                table.table_header_row([], [
+                  table.table_column_header([], [text("Name")]),
+                  table.table_column_header([], [text("Status")]),
+                  table.table_column_header([], [text("Actions")]),
+                ]),
+              ]),
+              table.table_body([], [
+                table.table_row([attribute("data-testid", "table-row-1")], [
+                  table.table_cell([], [text("Item Alpha")]),
+                  table.table_cell([], [text("Active")]),
+                  table.table_cell([], [text("Edit")]),
+                ]),
+                table.table_row([attribute("data-testid", "table-row-2")], [
+                  table.table_cell([], [text("Item Beta")]),
+                  table.table_cell([], [text("Pending")]),
+                  table.table_cell([], [text("Edit")]),
+                ]),
+              ]),
+            ],
+          ),
+        ]),
 
-    tailwind.field([
-      tailwind.section_description_text("Virtualizer - Virtual scrolling container"),
-      virtualizer.virtualizer(
-        [
-          virtualizer.aria_label("Virtual list"),
-          attribute("data-testid", "virtualizer-demo"),
-          class("h-64"),
-        ],
-        virtualizer_utils.generate_virtualizer_items(100),
-      ),
-    ]),
+        tailwind.field([
+          tailwind.section_description_text("Tag Group - Removable tags with aria-selected"),
+          tag_group.tag_group(
+            [
+              attribute("data-testid", "tag-group-demo"),
+            ],
+            "Selected filters",
+            [
+              tag_group.tag(
+                [
+                  tag_group.variant(tag_group.Default),
+                  tag_group.size(tag_group.Medium),
+                  attribute("data-testid", "tag-1"),
+                ],
+                [text("React")],
+              ),
+              tag_group.tag(
+                [
+                  tag_group.variant(tag_group.Secondary),
+                  tag_group.size(tag_group.Medium),
+                  attribute("data-testid", "tag-2"),
+                ],
+                [text("Gleam")],
+              ),
+              tag_group.tag_with_remove(
+                [
+                  tag_group.variant(tag_group.Outline),
+                  tag_group.size(tag_group.Medium),
+                  attribute("data-testid", "tag-3"),
+                ],
+                [text("Lustre")],
+              ),
+            ],
+          ),
+        ]),
 
-    tailwind.helper_text_text("Use arrow keys to navigate list/tree items. Space/Enter selects. Escape closes trees."),
-  ])
+        tailwind.field([
+          tailwind.section_description_text("Group - role=group for related controls"),
+          group.group(
+            [
+              group.aria_label("Filter options"),
+              attribute("data-testid", "group-demo"),
+            ],
+            [
+              checkbox.checkbox([attribute("id", "group-cb-1")], [text("Active")]),
+              checkbox.checkbox([attribute("id", "group-cb-2")], [text("Archived")]),
+            ],
+          ),
+        ]),
+
+        tailwind.field([
+          tailwind.section_description_text("Virtualizer - Virtual scrolling container"),
+          virtualizer.virtualizer(
+            [
+              virtualizer.aria_label("Virtual list"),
+              attribute("data-testid", "virtualizer-demo"),
+              class("h-64"),
+            ],
+            virtualizer_utils.generate_virtualizer_items(100),
+          ),
+        ]),
+
+        tailwind.helper_text_text("Use arrow keys to navigate list/tree items. Space/Enter selects. Escape closes trees."),
+      ]),
+      p(
+        [
+          attribute("data-testid", "collections-keyboard-hint"),
+          class("text-xs text-muted-foreground"),
+        ],
+        [text("Collections: arrow keys navigate, Space/Enter selects.")],
+      ),
+    ]
+  )
 }
 
 pub fn view_custom_select(model: Model) -> Element(Msg) {
@@ -383,6 +398,10 @@ pub fn view_combobox(model: Model) -> Element(Msg) {
           attribute("role", "combobox"),
           attribute("aria-autocomplete", "list"),
           attribute("aria-controls", combobox_utils.listbox_element_id()),
+          attribute("aria-expanded", case model.combobox.is_open {
+            True -> "true"
+            False -> "false"
+          }),
           // F8: Use aria-activedescendant to indicate active option
           attribute("aria-activedescendant", highlighted_option_id),
           event.on_input(fn(v) { ComboboxMsg(combobox_utils.InputChange(v)) }),
@@ -763,22 +782,38 @@ pub fn view_drop_zones(model: Model) -> Element(Msg) {
   tailwind.vstack_md([
     tailwind.section_heading("Drop Zone"),
     tailwind.section_description_text("Drop zone with aria-dropeffect and aria-label."),
-    drop_zone.drop_zone_with_input(
+    div(
       [
-        attribute("data-testid", "drop-zone-default"),
-        attribute("aria-label", "Drop files here or click to browse"),
-        class(drop_zone_class),
-        attribute("accept", ".png,.jpg,.gif,.webp"),
-        attribute("multiple", "true"),
+        attribute("data-testid", "drop-zone-wrapper"),
+        class("space-y-2"),
       ],
       [
-        tailwind.vstack_sm([
-          tailwind.text_sm("Drop files here"),
-          tailwind.helper_text_text("or click to browse"),
-        ]),
-      ],
+        drop_zone.drop_zone_with_input(
+          [
+            attribute("data-testid", "drop-zone-default"),
+            attribute("aria-label", "Upload files by dropping them here"),
+            attribute("aria-describedby", "drop-zone-hint"),
+            class(drop_zone_class <> " border-dashed rounded text-center focus-visible:ring p-4"),
+            attribute("accept", ".png,.jpg,.gif,.webp"),
+            attribute("multiple", "true"),
+          ],
+          [
+            tailwind.vstack_sm([
+              tailwind.text_sm("Drop files here"),
+              tailwind.helper_text_text("or click to browse"),
+            ]),
+          ],
+        ),
+        p(
+          [
+            attribute("id", "drop-zone-hint"),
+            attribute("data-testid", "drop-zone-hint"),
+            class("text-xs text-muted-foreground"),
+          ],
+          [text("Drop zone accepts file drops. aria-dropeffect indicates copy operation.")],
+        ),
+      ]
     ),
-    tailwind.helper_text_text("Drop zone accepts file drops. aria-dropeffect indicates the type of operation (copy). Keyboard users can activate with Enter or Space."),
   ])
 }
 

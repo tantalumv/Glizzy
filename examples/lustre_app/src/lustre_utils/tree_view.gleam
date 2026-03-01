@@ -77,7 +77,7 @@ pub fn render_tree_item(
 
   let item_element = ui_tree.tree_item(
     [
-      attribute("id", item.id),
+      attribute("id", "tree-item-" <> item.id),
       attribute("aria-expanded", case expanded, has_children {
         True, True -> "true"
         _, _ -> "false"

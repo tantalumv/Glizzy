@@ -79,20 +79,26 @@ pub fn update(model: Model, msg: Msg) -> #(Model, Effect(Msg)) {
       False -> update(model, Open)
     }
     Open -> #(
-      Model(..model, is_open: True),
-      focus_trap_enable(model.focus_scope_id)
+      Model(..model, is_open: True, trigger_element_id: "modal-trigger"),
+      focus.create_scope(model.focus_scope_id, FocusScopeCreated)
     )
     Close -> #(
-      Model(..model, is_open: False, trigger_element_id: ""),
-      focus_trap_disable_and_restore(model.focus_scope_id, model.trigger_element_id)
+      Model(..model, is_open: False),
+      focus_trap_disable_and_restore(
+        model.focus_scope_id,
+        model.trigger_element_id,
+      )
     )
     Escape -> #(
-      Model(..model, is_open: False, trigger_element_id: ""),
-      focus_trap_disable_and_restore(model.focus_scope_id, model.trigger_element_id)
+      Model(..model, is_open: False),
+      focus_trap_disable_and_restore(
+        model.focus_scope_id,
+        model.trigger_element_id,
+      )
     )
     FocusScopeCreated(scope_id) -> #(
       Model(..model, focus_scope_id: scope_id),
-      none()
+      focus_trap_enable(scope_id)
     )
     TriggerFocusCaptured(element_id) -> #(
       Model(..model, trigger_element_id: element_id),
@@ -104,18 +110,20 @@ pub fn update(model: Model, msg: Msg) -> #(Model, Effect(Msg)) {
 /// Enable focus trap for the modal.
 fn focus_trap_enable(scope_id: String) -> Effect(Msg) {
   batch([
-    focus.create_scope(scope_id, FocusScopeCreated),
     focus.trap_focus(scope_id, True),
     focus.focus_first(scope_id),
   ])
 }
 
 /// Disable focus trap and restore focus to trigger element.
-fn focus_trap_disable_and_restore(scope_id: String, trigger_id: String) -> Effect(Msg) {
-  batch([
-    focus.trap_focus(scope_id, False),
-    focus.focus_by_id(trigger_id),
-  ])
+fn focus_trap_disable_and_restore(
+  scope_id: String,
+  trigger_id: String,
+) -> Effect(Msg) {
+  case trigger_id {
+    "" -> focus.trap_focus(scope_id, False)
+    _ -> batch([focus.trap_focus(scope_id, False), focus.focus_by_id(trigger_id)])
+  }
 }
 
 pub fn is_open(model: Model) -> Bool {

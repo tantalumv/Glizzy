@@ -234,8 +234,11 @@ pub fn update(model: Model, msg: Msg) -> #(Model, Effect(Msg)) {
         click_outside_effect,
       )
     }
-    // Navigation updates
-    TabSelected(tab) -> #(Model(..model, tabs_selected: tab), none())
+    // Navigation updates - focus the newly selected tab
+    TabSelected(tab) -> #(
+      Model(..model, tabs_selected: tab),
+      focus.focus_by_id("demo-tab-" <> tab),
+    )
     MenuMsg(m_msg) -> {
       let new_menu = menu_utils.update(model.menu, m_msg)
       case m_msg {

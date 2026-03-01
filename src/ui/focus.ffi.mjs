@@ -4,6 +4,7 @@
 
 // Focus scope management for Glizzy package
 // Inline implementations that work standalone
+import { Some, None } from "../../gleam_stdlib/gleam/option.mjs"
 
 const focusScopes = new Map();
 
@@ -161,7 +162,7 @@ export function focusElementById(elementId) {
 export function getFocusedElementId() {
   const element = document.activeElement;
   if (element && element.id) {
-    return element.id;
+    return new Some(element.id);
   }
-  return null;
+  return new None();
 }

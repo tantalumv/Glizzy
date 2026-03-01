@@ -102,7 +102,7 @@ pub fn modal(
 }
 
 pub fn underlay(attributes: List(Attribute(a))) -> Element(a) {
-  html.div([class("fixed inset-0 bg-black/70 z-40"), ..attributes], [])
+  html.div([class("absolute inset-0 bg-black/70"), ..attributes], [])
 }
 
 pub fn content(

@@ -24,7 +24,10 @@ pub fn dialog(
   attributes: List(Attribute(a)),
   children: List(Element(a)),
 ) -> Element(a) {
-  div(attributes, children)
+  div(
+    [class("fixed inset-0 z-50 flex items-center justify-center"), ..attributes],
+    children,
+  )
 }
 
 pub fn trigger(

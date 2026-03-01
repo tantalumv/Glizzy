@@ -30,7 +30,7 @@ test.describe("Modal Component", () => {
 
     test("should not show modal content by default", async ({ page }) => {
       const modalWrapper = page.getByTestId("modal-wrapper");
-      await expect(modalWrapper).toHaveClass(/hidden/);
+      await expect(modalWrapper).not.toBeVisible();
     });
 
     test("should show modal when trigger is clicked", async ({ page }) => {
@@ -38,7 +38,7 @@ test.describe("Modal Component", () => {
       await trigger.click();
 
       const modalWrapper = page.getByTestId("modal-wrapper");
-      await expect(modalWrapper).not.toHaveClass(/hidden/);
+      await expect(modalWrapper).toBeVisible();
     });
 
     test("should have underlay element when modal opens", async ({ page }) => {
@@ -46,7 +46,7 @@ test.describe("Modal Component", () => {
       await trigger.click();
 
       const modalWrapper = page.getByTestId("modal-wrapper");
-      await expect(modalWrapper).not.toHaveClass(/hidden/);
+      await expect(modalWrapper).toBeVisible();
 
       const underlay = page.getByTestId("modal-underlay");
       const underlayCount = await underlay.count();
@@ -111,12 +111,12 @@ test.describe("Modal Component", () => {
       await trigger.click();
 
       const modalWrapper = page.getByTestId("modal-wrapper");
-      await expect(modalWrapper).not.toHaveClass(/hidden/);
+      await expect(modalWrapper).toBeVisible();
 
       const closeButton = page.getByTestId("modal-close");
       await closeButton.click();
 
-      await expect(modalWrapper).toHaveClass(/hidden/);
+      await expect(modalWrapper).not.toBeVisible();
     });
 
     test("should close modal when underlay is clicked", async ({ page }) => {
@@ -124,12 +124,12 @@ test.describe("Modal Component", () => {
       await trigger.click();
 
       const modalWrapper = page.getByTestId("modal-wrapper");
-      await expect(modalWrapper).not.toHaveClass(/hidden/);
+      await expect(modalWrapper).toBeVisible();
 
       const underlay = page.getByTestId("modal-underlay");
       await underlay.dispatchEvent("click");
 
-      await expect(modalWrapper).toHaveClass(/hidden/);
+      await expect(modalWrapper).not.toBeVisible();
     });
 
     test("should close modal when Escape key is pressed", async ({ page }) => {
@@ -137,11 +137,15 @@ test.describe("Modal Component", () => {
       await trigger.click();
 
       const modalWrapper = page.getByTestId("modal-wrapper");
-      await expect(modalWrapper).not.toHaveClass(/hidden/);
+      await expect(modalWrapper).toBeVisible();
+      
+      // Focus the close button to ensure focus is in modal
+      const closeButton = page.getByTestId("modal-close");
+      await closeButton.focus();
 
       await page.keyboard.press("Escape");
       await page.waitForTimeout(100);
-      await expect(modalWrapper).toHaveClass(/hidden/);
+      await expect(modalWrapper).not.toBeVisible();
     });
   });
 
@@ -163,15 +167,15 @@ test.describe("Modal Component", () => {
       await trigger.click();
 
       const modalWrapper = page.getByTestId("modal-wrapper");
-      await expect(modalWrapper).not.toHaveClass(/hidden/);
+      await expect(modalWrapper).toBeVisible();
 
       const closeButton = page.getByTestId("modal-close");
       await closeButton.click();
 
-      await expect(modalWrapper).toHaveClass(/hidden/);
+      await expect(modalWrapper).not.toBeVisible();
 
       await trigger.click();
-      await expect(modalWrapper).not.toHaveClass(/hidden/);
+      await expect(modalWrapper).toBeVisible();
     });
   });
 

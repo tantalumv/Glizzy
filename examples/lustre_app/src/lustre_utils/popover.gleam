@@ -77,7 +77,7 @@ pub fn init() -> #(Model, Effect(Msg)) {
 pub fn init_open() -> #(Model, Effect(Msg)) {
   #(
     Model(is_open: True, focus_scope_id: "popover-content", trigger_element_id: ""),
-    focus_trap_enable("popover-content")
+    focus.create_scope("popover-content", FocusScopeCreated)
   )
 }
 
@@ -91,7 +91,7 @@ pub fn update(model: Model, msg: Msg) -> #(Model, Effect(Msg)) {
     }
     Open -> #(
       Model(..model, is_open: True),
-      focus_trap_enable(model.focus_scope_id)
+      focus.create_scope(model.focus_scope_id, FocusScopeCreated)
     )
     Close -> #(
       Model(..model, is_open: False, trigger_element_id: ""),
@@ -107,7 +107,7 @@ pub fn update(model: Model, msg: Msg) -> #(Model, Effect(Msg)) {
     )
     FocusScopeCreated(scope_id) -> #(
       Model(..model, focus_scope_id: scope_id),
-      none()
+      focus_trap_enable(scope_id)
     )
     TriggerFocusCaptured(element_id) -> #(
       Model(..model, trigger_element_id: element_id),
@@ -119,7 +119,6 @@ pub fn update(model: Model, msg: Msg) -> #(Model, Effect(Msg)) {
 /// Enable focus trap for the popover.
 fn focus_trap_enable(scope_id: String) -> Effect(Msg) {
   batch([
-    focus.create_scope(scope_id, FocusScopeCreated),
     focus.trap_focus(scope_id, True),
     focus.focus_first(scope_id),
   ])
