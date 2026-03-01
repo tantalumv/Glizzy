@@ -58,3 +58,4 @@ temp/
 
 # OS files
 Thumbs.db
+playwright.config.ts
